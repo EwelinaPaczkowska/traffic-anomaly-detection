@@ -31,7 +31,6 @@ parser.add_argument(
 args = parser.parse_args()
 
 
-# Wczytanie oficjalnych adnotacji anomalii
 annotations = {}
 
 with open(args.annotations_path, "r", encoding="utf-8") as file:
@@ -44,7 +43,6 @@ with open(args.annotations_path, "r", encoding="utf-8") as file:
         annotations[video_id].append((start, end))
 
 
-# Sortowanie filmów numerycznie: 1, 2, 3... zamiast 1, 10, 100...
 videos = sorted(
     args.videos_dir.glob("*.mp4"),
     key=lambda path: int(path.stem)
