@@ -15,6 +15,8 @@ parser.add_argument(
     type=Path,
     default=Path("results/reconstruction_error.png")
 )
+parser.add_argument("--anomaly-start", type=float, required=True)
+parser.add_argument("--anomaly-end", type=float, required=True)
 args = parser.parse_args()
 
 model = keras.models.load_model(args.model_path)
@@ -80,13 +82,61 @@ video.release()
 errors = np.array(errors)
 times = np.array(times)
 
+anomaly_start = args.anomaly_start
+anomaly_end = args.anomaly_end
+
+window_seconds = 5
+window_size = max(1, int(fps * window_seconds))
+
+padding = window_size // 2
+
+padded_errors = np.pad(
+    errors,
+    (padding, padding),
+    mode="edge"
+)
+
+kernel = np.ones(window_size) / window_size
+
+smoothed_errors = np.convolve(
+    padded_errors,
+    kernel,
+    mode="valid"
+)
+
+smoothed_errors = smoothed_errors[:len(errors)]
+
+mean_error = smoothed_errors.mean()
+std_error = smoothed_errors.std()
+
+normalized_errors = (smoothed_errors - mean_error) / std_error
+
 args.output.parent.mkdir(parents=True, exist_ok=True)
 
 plt.figure(figsize=(14, 6))
-plt.plot(times, errors)
+
+plt.plot(
+    times,
+    normalized_errors,
+    label="Wygładzony i znormalizowany błąd"
+)
+
+plt.axvspan(
+    anomaly_start,
+    anomaly_end,
+    alpha=0.2,
+    label="Oznaczona anomalia"
+)
+
+plt.axvline(
+    anomaly_start,
+    linestyle="--"
+)
+
 plt.xlabel("Czas [s]")
-plt.ylabel("Błąd rekonstrukcji (MSE)")
+plt.ylabel("Znormalizowany błąd rekonstrukcji")
 plt.title(f"Błąd rekonstrukcji — {args.video_path.name}")
+plt.legend()
 plt.tight_layout()
 plt.savefig(args.output, dpi=150)
 plt.show()
