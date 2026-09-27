@@ -5,6 +5,11 @@ import numpy as np
 from tensorflow import keras
 from tensorflow.keras import layers
 
+import tensorflow as tf
+
+keras.utils.set_random_seed(42)
+tf.config.experimental.enable_op_determinism()
+
 
 parser = argparse.ArgumentParser()
 

@@ -28,6 +28,9 @@ if not video.isOpened():
 
 fps = video.get(cv2.CAP_PROP_FPS)
 
+TARGET_FPS = 1
+frame_step = max(1, round(fps / TARGET_FPS))
+
 errors = []
 times = []
 
@@ -41,6 +44,9 @@ while True:
         break
 
     frame_number = int(video.get(cv2.CAP_PROP_POS_FRAMES)) - 1
+
+    if frame_number % frame_step != 0:
+        continue
 
     frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     frame = cv2.resize(frame, (128, 64))
@@ -86,7 +92,7 @@ anomaly_start = args.anomaly_start
 anomaly_end = args.anomaly_end
 
 window_seconds = 5
-window_size = max(1, int(fps * window_seconds))
+window_size = max(1, int(TARGET_FPS * window_seconds))
 
 padding = window_size // 2
 

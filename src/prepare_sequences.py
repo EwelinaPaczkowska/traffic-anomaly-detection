@@ -15,7 +15,7 @@ parser.add_argument(
 parser.add_argument(
     "--videos",
     nargs="+",
-    default=["1", "3", "4"]
+    default=["37", "1", "27", "38", "23", "34", "15", "62", "6", "17"],
 )
 
 parser.add_argument(

@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from tensorflow import keras
 
+from sklearn.metrics import roc_auc_score
 
 parser = argparse.ArgumentParser()
 
@@ -137,6 +138,21 @@ baseline_normalized = normalize(
 temporal_normalized = normalize(
     smooth(temporal_errors)
 )
+
+labels = (
+    (comparison_times >= args.anomaly_start)
+    & (comparison_times <= args.anomaly_end)
+).astype(int)
+
+baseline_scores = smooth(baseline_errors)
+temporal_scores = smooth(temporal_errors)
+
+baseline_auc = roc_auc_score(labels, baseline_scores)
+temporal_auc = roc_auc_score(labels, temporal_scores)
+
+print()
+print(f"ROC AUC model jednoklatkowy: {baseline_auc:.4f}")
+print(f"ROC AUC model temporalny: {temporal_auc:.4f}")
 
 anomaly_mask = (
     (comparison_times >= args.anomaly_start)
