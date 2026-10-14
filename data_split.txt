@@ -1,0 +1,25 @@
+TRAIN
+Wszystkie nagrania z has_anomaly = no
+
+VALIDATION
+14.mp4
+35.mp4
+51.mp4
+73.mp4
+91.mp4
+
+TEST
+2.mp4
+9.mp4
+49.mp4
+74.mp4
+83.mp4
+
+RESERVE
+11.mp4
+33.mp4
+63.mp4
+72.mp4
+93.mp4
+95.mp4
+97.mp4

@@ -139,13 +139,30 @@ temporal_normalized = normalize(
     smooth(temporal_errors)
 )
 
+baseline_scores = smooth(baseline_errors)
+temporal_scores = smooth(temporal_errors)
+
 labels = (
     (comparison_times >= args.anomaly_start)
     & (comparison_times <= args.anomaly_end)
 ).astype(int)
 
-baseline_scores = smooth(baseline_errors)
-temporal_scores = smooth(temporal_errors)
+normal_mask = labels == 0
+anomaly_mask = labels == 1
+
+print()
+print("Model jednoklatkowy:")
+print(f"Średni score normalny: {baseline_scores[normal_mask].mean():.6f}")
+print(f"Mediana score normalny: {np.median(baseline_scores[normal_mask]):.6f}")
+print(f"Średni score anomalia: {baseline_scores[anomaly_mask].mean():.6f}")
+print(f"Mediana score anomalia: {np.median(baseline_scores[anomaly_mask]):.6f}")
+
+print()
+print("Model temporalny:")
+print(f"Średni score normalny: {temporal_scores[normal_mask].mean():.6f}")
+print(f"Mediana score normalny: {np.median(temporal_scores[normal_mask]):.6f}")
+print(f"Średni score anomalia: {temporal_scores[anomaly_mask].mean():.6f}")
+print(f"Mediana score anomalia: {np.median(temporal_scores[anomaly_mask]):.6f}")
 
 baseline_auc = roc_auc_score(labels, baseline_scores)
 temporal_auc = roc_auc_score(labels, temporal_scores)
